@@ -139,11 +139,12 @@ public class StatementMoverForm : Form{
         folderDialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         DialogResult result = folderDialog.ShowDialog();
         if (result == DialogResult.OK){
-            if ((sender as Button).Text.Split(" ")[1] == "Input"){
+            Button? btn = sender as Button;
+            if (btn!.Text.Split(" ")[1] == "Input"){
                 selectedInPathText = folderDialog.SelectedPath;
                 selectedInPathBox.Text = selectedInPathText;
                 PopulateFileList(folderDialog.SelectedPath);
-            } else if ((sender as Button).Text.Split(" ")[1] == "Destination"){
+            } else if (btn!.Text.Split(" ")[1] == "Destination"){
                 selectedOutPathText = folderDialog.SelectedPath;
                 selectedOutPathBox.Text = selectedOutPathText;
                 Statement.baseDestDir = selectedOutPathText.Replace("\\", "/");
