@@ -25,6 +25,7 @@ namespace StatementFile{
         public readonly string accountName;
         public string newFileDir = "";
         public string newFileName;
+        public static string baseDestDir = "L:/BANK STMTS";
 
         public Statement(string file){
             LoadRegex();
@@ -137,7 +138,7 @@ namespace StatementFile{
         }
 
         private string FindOutfileDir(){
-            string[] allDirs = Directory.GetDirectories("L:/BANK STMTS/");
+            string[] allDirs = Directory.GetDirectories($"{baseDestDir}/");
             bool dirExistsAsName = false;
             bool dirIsGeneral = false;
             foreach(string dir in allDirs){
@@ -151,13 +152,13 @@ namespace StatementFile{
                 }
             }
             if (dirExistsAsName && !dirIsGeneral){
-                fileMoveDump += $"{nl}Found Directory {accountName}/{nl}File Destination: L:/BANK STMTS/{accountName}/";
-                return $"L:/BANK STMTS/{accountName}";
+                fileMoveDump += $"{nl}Found Directory {accountName}/{nl}File Destination: {baseDestDir}/{accountName}/";
+                return $"{baseDestDir}/{accountName}";
             } else {
                 fileMoveDump += $"{nl}Directory {accountName} does not exist or is a general directory";
                 for(int i = 0; i < numRegex; i++){
                     string r = @$"{regexes[i]}";
-                    if (Regex.Match(accountName, r, RegexOptions.IgnoreCase).Success){
+                    if (Regex.Match(accountName, r, RegexOptions.IgnoreCase).Success && Directory.Exists($"{baseDestDir}/{boaBases[i]}")){
                         return GetBOADir(boaBases[i]);
                     }
                 }
@@ -168,7 +169,7 @@ namespace StatementFile{
         }
 
         private string GetBOADir(string baseDir){
-            string dirPath = $"L:/BANK STMTS/{baseDir}";
+            string dirPath = $"{baseDestDir}/{baseDir}";
             string[] allDirs = Directory.GetDirectories(dirPath);
             foreach(string dir in allDirs){
                 string boaDir = dir.Split("\\").Last(); 

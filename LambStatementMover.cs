@@ -9,7 +9,7 @@ public class StatementMoverForm : Form{
     private TextBox selectedInPathBox;
     private string selectedInPathText = "";
     private TextBox selectedOutPathBox;
-    private string selectedOutPathText = "L:/BANK STMTS/";
+    private string selectedOutPathText = "L:\\BANK STMTS";
     private ListBox fileLoadListBox;
     private ListBox fileMoveListBox;
     private TextBox fileReadStatusBox;
@@ -146,6 +146,7 @@ public class StatementMoverForm : Form{
             } else if ((sender as Button).Text.Split(" ")[1] == "Destination"){
                 selectedOutPathText = folderDialog.SelectedPath;
                 selectedOutPathBox.Text = selectedOutPathText;
+                Statement.baseDestDir = selectedOutPathText.Replace("\\", "/");
             }
         }
     }
