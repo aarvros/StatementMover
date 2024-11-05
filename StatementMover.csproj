@@ -33,24 +33,8 @@
     </None>
   </ItemGroup>
 
-  <Target Name="ZipOutput" AfterTargets="Publish">
-    <ItemGroup>
-        <FilesToZip Include="$(OutputPath)publish\$(AssemblyName).exe" />
-        <FilesToZip Include="$(OutputPath)publish\nl\PdfiumViewer.resources.dll" />
-        <FilesToZip Include="$(OutputPath)publish\x64\pdfium.dll" />
-        <FilesToZip Include="$(OutputPath)publish\StatementMover.deps.json" />
-        <FilesToZip Include="$(OutputPath)publish\StatementMover.dll" />
-        <FilesToZip Include="$(OutputPath)publish\PdfiumViewer.dll" />
-        <FilesToZip Include="$(OutputPath)publish\README.txt" />
-        <FilesToZip Include="$(OutputPath)publish\regex.config" />
-        <FilesToZip Include="$(OutputPath)publish\StatementMover.pdb" />
-        <FilesToZip Include="$(OutputPath)publish\StatementMover.runtimeconfig.json" />
-    </ItemGroup>
-    <Message Importance="high" Text="OutputPath: $(OutputPath)" />
-    <Message Importance="high" Text="AssemblyName: $(AssemblyName)" />
-    <Message Importance="high" Text="Files to Zip: @(FilesToZip)" />
-    <Exec Command="powershell -Command &quot;@(FilesToZip) | ForEach-Object { if (Test-Path $_) { Write-Host &quot;$_ exists&quot; } else { Write-Host &quot;$_ does not exist&quot; } }&quot;" />
-    <Exec Command="powershell Compress-Archive -Path @(FilesToZip -> '$(OutputPath)') -DestinationPath '$(OutputPath)$(AssemblyName).zip' -Force" />
+  <Target Name="RunPostPublishScript" AfterTargets="Publish">
+    <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)PostPublishCompress.ps1&quot; -OutputPath &quot;$(OutputPath)&quot;" />
   </Target>
 
 </Project>
