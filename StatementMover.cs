@@ -18,7 +18,7 @@ public class StatementMoverForm : Form{
     private CheckBox disableCopy; 
     private List<Statement> stmts = [];
     public StatementMoverForm(){
-        Text = "BOA Statement Mover";
+        Text = "BOA Statement Mover v1.3";
         ClientSize = new System.Drawing.Size(1100, 600); // Width, Height
         Icon = new Icon(LoadIco());
 
