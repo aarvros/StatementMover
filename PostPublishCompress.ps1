@@ -25,7 +25,7 @@ if (Test-Path "$publishDir\x64") {
     Remove-Item -Path "$publishDir\x64" -Force
 }
 
-Get-ChildItem -Path $publishDir -File | Where-Object { $_.Name -ne 'README.txt' } | ForEach-Object {
+Get-ChildItem -Path $publishDir -File | Where-Object { $_.Name -ne 'README.md' } | ForEach-Object {
     Move-Item $_.FullName -Destination "$objDir\$_"
 }
 
