@@ -3,13 +3,14 @@
 2. Type "dotnet --version" and hit enter
 
 If you see a version number like "8.0.403" come up, you have the .NET runtime installed. \
-If you do not see a version number, you do not have the .NET runtime installed.
+If you do not see a version number, you do not have the .NET runtime installed. \
+Once the .NET runtime is installed, you will not have to reinstalled it every release.
 
 ### If you DO NOT have the .NET runtime installed
 1. Ask Steve to install the [.NET runtime](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-8.0.403-windows-x64-installer) for you
 
 ### If you have .NET runtime installed
-1. Unzip the zip file
+1. Extract the zip file
 2. Move the StatementMover folder to a storage location (Desktop/ or Documents/ for example)
 3. Open the StatementMover folder
 4. Open the bin folder and locate the StatementMover.exe
