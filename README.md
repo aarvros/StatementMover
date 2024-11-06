@@ -4,10 +4,10 @@ Getting Started:
 1. Type "cmd" into the search bar on your taskbar and hit enter
 2. Type "dotnet --version" and hit enter
 
-If you see a version number like "8.0.403" come up, you have the .NET runtime installed.
+If you see a version number like "8.0.403" come up, you have the .NET runtime installed. \
 If you do not see a version number, or it says "dotnet is not a valid command", you do not have the .NET runtime installed.
 
-### No .NET runtime installed
+### If you DO NOT have the .NET runtime installed
 1. Ask Steve to install the [.NET runtime](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-8.0.403-windows-x64-installer) for you
 
 ### If you have .NET runtime installed
