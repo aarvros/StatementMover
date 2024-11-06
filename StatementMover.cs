@@ -32,47 +32,37 @@ public class StatementMoverForm : Form{
         Button selectOutFolder = new Button {Text = "Select Destination Folder", Dock = DockStyle.Fill};
         selectOutFolder.Click += InFolderClick;
         
+        selectedInPathBox = new TextBox{Dock = DockStyle.Fill,Text = selectedInPathText, ReadOnly = true};
+        selectedOutPathBox = new TextBox{Dock = DockStyle.Fill,Text = selectedOutPathText, ReadOnly = true};
+        
         Button runButton = new Button {Text = "Run", Dock = DockStyle.Fill};
         runButton.Click += RunProcess;
-        //Controls.Add(runButton);
 
         Button openDestfolder = new Button {Text = "Open Destination Folder", Dock = DockStyle.Fill};
         openDestfolder.Click += OpenDestfolder;
-        //Controls.Add(openDestfolder);
 
         Button openFileLocation = new Button {Text = "Open Selected File Location", Dock = DockStyle.Fill};
         openFileLocation.Click += GoToFileLocation;
-        //Controls.Add(openFileLocation);
 
         allowDupe = new CheckBox{Appearance = Appearance.Normal, Text = "Allow Duplicates", AutoSize = true, Checked = true};
         disableCopy = new CheckBox{Appearance = Appearance.Normal, Text = "Don't Move Files", AutoSize = true, Checked = false};
 
         fileLoadListBox = new ListBox{Dock = DockStyle.Fill};
-        //Controls.Add(fileLoadListBox);
         fileMoveListBox = new ListBox{Dock = DockStyle.Fill};
-        //Controls.Add(fileLoadListBox);
         fileLoadListBox.SelectedIndexChanged += LoadIndexChanged;
         fileMoveListBox.SelectedIndexChanged += MoveIndexChanged;
 
-        fileReadStatusBox = new System.Windows.Forms.TextBox{
-            Dock = DockStyle.Fill,
-            Multiline = true,
-            ScrollBars = System.Windows.Forms.ScrollBars.Both,
-            ReadOnly = true
-        };
-        fileMoveStatusBox = new System.Windows.Forms.TextBox{
-            Dock = DockStyle.Fill,
-            Multiline = true,
-            ScrollBars = System.Windows.Forms.ScrollBars.Both,
-            ReadOnly = true
-        };
-        selectedInPathBox = new System.Windows.Forms.TextBox{Dock = DockStyle.Fill,Text = selectedInPathText, ReadOnly = true};
-        selectedOutPathBox = new System.Windows.Forms.TextBox{Dock = DockStyle.Fill,Text = selectedOutPathText, ReadOnly = true};
+        fileReadStatusBox = new TextBox{Dock = DockStyle.Fill,Multiline = true,ScrollBars = ScrollBars.Both,ReadOnly = true};
+        fileMoveStatusBox = new TextBox{Dock = DockStyle.Fill,Multiline = true,ScrollBars = ScrollBars.Both,ReadOnly = true};
 
         // Designate row size ratios
         tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 10f));
         tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 60f));
         tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 30f));
+        importPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
+        importPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
+        exportPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
+        exportPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
 
         // Designate column size ratios
         tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
@@ -82,20 +72,14 @@ public class StatementMoverForm : Form{
         optionsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
         optionsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
 
-        importPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
-        importPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
-
-        exportPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
-        exportPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
-
         // Add controls
-        tableLayoutPanel.Controls.Add(fileLoadListBox, 0, 1);
+        tableLayoutPanel.Controls.Add(fileLoadListBox, 0, 1);   // col 0, row 1
         tableLayoutPanel.Controls.Add(fileMoveListBox, 1, 1);
         tableLayoutPanel.Controls.Add(fileReadStatusBox, 0, 2);
         tableLayoutPanel.Controls.Add(fileMoveStatusBox, 1, 2);
 
-        tableLayoutPanel.Controls.Add(importPanel, 0, 0);   // options panel in col 0, row 0 of the root pane
-        tableLayoutPanel.Controls.Add(exportPanel, 1, 0);   // options panel in col 0, row 0 of the root pane
+        tableLayoutPanel.Controls.Add(importPanel, 0, 0);
+        tableLayoutPanel.Controls.Add(exportPanel, 1, 0);
         importPanel.Controls.Add(selectInFolder, 0, 0);
         importPanel.Controls.Add(selectOutFolder, 0, 1);
         importPanel.Controls.Add(selectedInPathBox, 1, 0);
@@ -110,7 +94,7 @@ public class StatementMoverForm : Form{
         optionsPanel.Controls.Add(disableCopy, 1, 0);
 
         // Add TableLayoutPanel to the form
-        this.Controls.Add(tableLayoutPanel);
+        Controls.Add(tableLayoutPanel);
     }
 
     private void LoadIndexChanged(object? sender, EventArgs? e){
