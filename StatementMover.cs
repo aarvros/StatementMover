@@ -18,11 +18,11 @@ public class StatementMoverForm : Form{
     private CheckBox disableCopy; 
     private List<Statement> stmts = [];
     public StatementMoverForm(){
-        Text = "BOA Statement Mover v1.3";
-        ClientSize = new System.Drawing.Size(1100, 600); // Width, Height
+        Text = "BOA Statement Mover v1.4";
+        ClientSize = new Size(1375, 600); // Width, Height
         Icon = new Icon(LoadIco());
 
-        TableLayoutPanel tableLayoutPanel = new TableLayoutPanel{Dock = DockStyle.Fill,ColumnCount = 2,RowCount = 3,AutoSize = true};
+        TableLayoutPanel tableLayoutPanel = new TableLayoutPanel{Dock = DockStyle.Fill,ColumnCount = 3,RowCount = 3,AutoSize = true};
         TableLayoutPanel importPanel = new TableLayoutPanel{Dock = DockStyle.Fill,ColumnCount = 2,RowCount = 2,AutoSize = true};
         TableLayoutPanel exportPanel = new TableLayoutPanel{Dock = DockStyle.Fill,ColumnCount = 2,RowCount = 2,AutoSize = true};
         TableLayoutPanel optionsPanel = new TableLayoutPanel{Dock = DockStyle.Fill,ColumnCount = 2,RowCount = 1,AutoSize = true};
@@ -65,8 +65,9 @@ public class StatementMoverForm : Form{
         exportPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
 
         // Designate column size ratios
-        tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
-        tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
+        tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35f));
+        tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35f));
+        tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30f));
         importPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
         importPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
         optionsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));

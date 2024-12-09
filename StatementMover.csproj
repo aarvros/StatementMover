@@ -5,14 +5,12 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
-    <PlatformTarget>x64</PlatformTarget>
     <StartupObject>StatementWinForms.StatementMoverForm</StartupObject>
-    <PublishSingleFile>false</PublishSingleFile>
-    <SelfContained>false</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
     <ApplicationIcon>resources\lambicon.ico</ApplicationIcon>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract> 
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,9 +30,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+  <!--
   <Target Name="RunPostPublishScript" AfterTargets="Publish">
     <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)PostPublishCompress.ps1&quot; -OutputPath &quot;$(OutputPath)&quot;" />
   </Target>
+  -->
 
 </Project>

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace StatementFile{
     public class Statement{
         private static string nl = Environment.NewLine;
-        private static readonly string regexPath = Path.Combine(AppContext.BaseDirectory, "regex.config");
+        public static readonly string regexPath = Path.Combine(AppContext.BaseDirectory, "regex.config");
         private static int numRegex = 0;
         private static List<string> regexes = [];
         private static List<string> generalDirs = [];
