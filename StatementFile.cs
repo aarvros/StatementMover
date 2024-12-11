@@ -2,15 +2,13 @@ using System;
 using System.IO;
 using PdfiumViewer;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
 
 namespace StatementFile{
     public class Statement{
+        public RegexManager.RegexManager regexManager;
         private static string nl = Environment.NewLine;
-        public static readonly string regexPath = Path.Combine(AppContext.BaseDirectory, "regex.config");
-        private static int numRegex = 0;
-        private static List<string> regexes = [];
-        private static List<string> generalDirs = [];
-        private static List<string> boaBases = [];
+        public static readonly string regexPath = Path.Combine(AppContext.BaseDirectory, "regex.txt");
         private const string fileOkIcon = "✓";
         private const string fileErrorIcon = "⚠️";
         private bool disableCopy;
@@ -27,8 +25,8 @@ namespace StatementFile{
         public string newFileName;
         public static string baseDestDir = "L:/BANK STMTS";
 
-        public Statement(string file){
-            LoadRegex();
+        public Statement(RegexManager.RegexManager r, string file){
+            regexManager = r;
             filePath = file;
             fileName = filePath.Split("\\").Last();
             fileReadDump += $"{nl}File Name: {fileName}";
@@ -36,26 +34,6 @@ namespace StatementFile{
             (accountNumber, accountName) = ProcessPdf(filePath);
             newFileName = $"{fileDate}_{accountNumber}_{accountName}";
             fileReadDump += $"{nl}New File Name: {newFileName}.pdf";
-        }
-        
-        private void LoadRegex(){
-            StreamReader reader = File.OpenText(regexPath);
-            _ = reader.ReadLine();      // Toss header
-            string? s;
-            while ((s = reader.ReadLine()) != null)
-            {   
-                numRegex++;
-                string regex = s.Split("!!!")[0];
-                string boaDir = s.Split("!!!")[1];
-                if (regex.StartsWith("<>")){    // general dir
-                    regexes.Add(regex[2..]);
-                    generalDirs.Add(regex[2..]);
-                }else{
-                    regexes.Add(regex);
-                }
-                boaBases.Add(boaDir);
-            }
-            reader.Close();
         }
 
         private string GetDate(string fileName){
@@ -137,52 +115,103 @@ namespace StatementFile{
             newFileDir = outfileDir;
         }
 
+        private string FindBOADir(string dirName){
+            string dirPath = $"{baseDestDir}/{dirName}";
+            string[] allDirs = Directory.GetDirectories(dirPath);
+            List<string> dirs = [];
+            List<string> accNums = [];
+            foreach(string dir in allDirs){
+                string testDirName = dir.Split("\\").Last(); 
+                Match match = Regex.Match(testDirName, @"BOA\s\d{4}.*", RegexOptions.IgnoreCase);
+                if(match.Success){
+                    Match numMatch = Regex.Match(testDirName, @"\d{4}", RegexOptions.IgnoreCase);
+                    dirs.Add(testDirName);
+                    accNums.Add(numMatch.Value.ToString());
+                }
+            }
+            int idx = accNums.IndexOf(accountNumber);
+            if(idx != -1){
+                return dirs[idx];
+            }else{
+                return "";
+            }
+
+        }
+        
+        private string FindOutfileDirFromBase(string accountDir){
+            string boaDir = FindBOADir(accountDir);
+                if(boaDir == ""){   // if accountname dir has no boa folder, drop it there
+                    fileMoveDump += $"{nl}Could Not Find BOA Directory!";
+                    fileMoveDump += $"{nl}Found Directory {accountName}/{nl}File Destination: {baseDestDir}/{accountDir}/";
+                    return $"{baseDestDir}/{accountDir}";
+                }else{              // if the accountname dir does have a boa folder
+                    fileMoveDump += $"{nl}Found Directory {accountName}/{boaDir}/{nl}File Destination: {baseDestDir}/{accountDir}/{boaDir}/";
+                    return $"{baseDestDir}/{accountDir}/{boaDir}";
+                }
+        }
+
         private string FindOutfileDir(){
             string[] allDirs = Directory.GetDirectories($"{baseDestDir}/");
             bool dirExistsAsName = false;
-            bool dirIsGeneral = false;
             foreach(string dir in allDirs){
                 if(dir.Contains(accountName)){
                     dirExistsAsName = true;
                 }
             }
-            foreach(string dir in generalDirs){
-                if(dir.Contains(accountName)){
-                    dirIsGeneral = true;
-                }
-            }
-            if (dirExistsAsName && !dirIsGeneral){
-                fileMoveDump += $"{nl}Found Directory {accountName}/{nl}File Destination: {baseDestDir}/{accountName}/";
-                return $"{baseDestDir}/{accountName}";
-            } else {
-                fileMoveDump += $"{nl}Directory {accountName} does not exist or is a general directory";
-                for(int i = 0; i < numRegex; i++){
-                    string r = @$"{regexes[i]}";
-                    if (Regex.Match(accountName, r, RegexOptions.IgnoreCase).Success && Directory.Exists($"{baseDestDir}/{boaBases[i]}")){
-                        return GetBOADir(boaBases[i]);
+
+            if(dirExistsAsName){    //if dir matches account name
+                return FindOutfileDirFromBase(accountName);
+            }else{                  // if no account name dir is found
+                for(int i = 0; i < regexManager.ruleCount; i++){
+                    Match match = Regex.Match(accountName, regexManager.ruleRegex[i], RegexOptions.IgnoreCase);
+                    if (match.Success){     //if the regex rule matches the accountname
+                        string outBaseDir = regexManager.ruleDirectory[i];
+                        return FindOutfileDirFromBase(outBaseDir);
                     }
                 }
                 fileMovedOk = false;
-                fileMoveDump += $"{nl}General Directory: No matching general directory found";
+                fileMoveDump += $"{nl}No suitable file destination found!";
                 return "";
             }
         }
 
-        private string GetBOADir(string baseDir){
-            string dirPath = $"{baseDestDir}/{baseDir}";
-            string[] allDirs = Directory.GetDirectories(dirPath);
-            foreach(string dir in allDirs){
-                string boaDir = dir.Split("\\").Last(); 
-                if (boaDir.Length < 8){continue;}
-                string boaPart = boaDir[..8]; 
-                if (boaPart == $"BOA {accountNumber}"){
-                    fileMoveDump += $"{nl}General Directory: {baseDir}/{nl}BOA Folder: {boaDir}/{nl}File Destination: {dirPath}/{boaDir}/";
-                    return $"{dirPath}/{boaDir}";
+        /*
+        string[] allDirs = Directory.GetDirectories($"{baseDestDir}/");
+        bool dirExistsAsName = false;
+        bool dirIsGeneral = false;
+        foreach(string dir in allDirs){
+            if(dir.Contains(accountName)){
+                dirExistsAsName = true;
+            }
+        }
+        foreach(string dir in generalDirs){
+            if(dir.Contains(accountName)){
+                dirIsGeneral = true;
+            }
+        }
+        if (dirExistsAsName && !dirIsGeneral){
+            fileMoveDump += $"{nl}Found Directory {accountName}/{nl}File Destination: {baseDestDir}/{accountName}/";
+            return $"{baseDestDir}/{accountName}";
+        } else {
+            fileMoveDump += $"{nl}Directory {accountName} does not exist or is a general directory";
+            for(int i = 0; i < numRegex; i++){
+                string reg;
+                if(regexManager.ruleRegex[i][..2] == "<>"){
+                    reg = regexManager.ruleRegex[i][2..];
+                }else{
+                    reg = regexManager.ruleRegex[i][2..];
+                }
+                string r = @$"{reg}";
+                if (Regex.Match(accountName, r, RegexOptions.IgnoreCase).Success && Directory.Exists($"{baseDestDir}/{regexManager.ruleDirectory[i]}")){
+                    return GetBOADir(regexManager.ruleDirectory[i]);
                 }
             }
-            fileMoveDump += $"General Directory: {baseDir}/{nl}BOA Folder: Could not find a BOA {accountNumber} folder!{nl}File Destination: {dirPath}/";
-            return dirPath;
+            fileMovedOk = false;
+            fileMoveDump += $"{nl}General Directory: No matching general directory found";
+            return "";
         }
+        }
+        */
 
         public string GetInitialFileDisplayText(){
             if (fileReadOk){
