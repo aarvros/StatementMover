@@ -70,15 +70,17 @@ namespace StatementFile{
             this.disableCopy = disableCopy;
             fileMoveDump = "";
             newFileDir = "";
-            fileMovedOk = true;
             if (!fileReadOk){
+                fileMovedOk = false;
                 fileMoveDump += $"{nl}File read error! Skipping file";
                 newFileDir = "???";
+                return;
             }
             string outfileDir = FindOutfileDir();
             if (!fileMovedOk){
                 fileMoveDump += $"{nl}File copy error! Skipping file";
                 newFileDir = "???";
+                return;
             }
             string fileDest = outfileDir + "/" + newFileName + ".pdf";
             if (File.Exists(fileDest)){
@@ -94,7 +96,6 @@ namespace StatementFile{
                     fileMoveDump += $"{nl}File name already exists. File renamed";
                     fileMoveDump += $"{nl}New File Name: {newFileName}.pdf";
                     if (!disableCopy){
-
                         File.Copy(filePath, newFileDest);
                     } else {
                         fileMoveDump += $"{nl}File copying disabled by the user";
@@ -160,12 +161,14 @@ namespace StatementFile{
             }
 
             if(dirExistsAsName){    //if dir matches account name
+                fileMovedOk = true;
                 return FindOutfileDirFromBase(accountName);
             }else{                  // if no account name dir is found
                 for(int i = 0; i < regexManager.ruleCount; i++){
                     Match match = Regex.Match(accountName, regexManager.ruleRegex[i], RegexOptions.IgnoreCase);
                     if (match.Success){     //if the regex rule matches the accountname
                         string outBaseDir = regexManager.ruleDirectory[i];
+                        fileMovedOk = true;
                         return FindOutfileDirFromBase(outBaseDir);
                     }
                 }

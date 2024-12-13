@@ -11,6 +11,7 @@ public class StatementMoverForm : Form{
     private string selectedInPathText = "";
     private TextBox selectedOutPathBox;
     private string selectedOutPathText = "L:\\BANK STMTS";
+    private Button runButton;
     private ListBox fileLoadListBox;
     private ListBox fileMoveListBox;
     private TextBox fileReadStatusBox;
@@ -46,6 +47,7 @@ public class StatementMoverForm : Form{
         Button selectInFolder = new Button {Text = "Select Input Folder", Dock = DockStyle.Fill};
         selectInFolder.Click += InFolderClick;
         Button selectOutFolder = new Button {Text = "Select Destination Folder", Dock = DockStyle.Fill};
+        selectOutFolder.Enabled = false;
         selectOutFolder.Click += InFolderClick;
         selectedInPathBox = new TextBox{Dock = DockStyle.Fill,Text = selectedInPathText, ReadOnly = true};
         selectedOutPathBox = new TextBox{Dock = DockStyle.Fill,Text = selectedOutPathText, ReadOnly = true};
@@ -59,7 +61,7 @@ public class StatementMoverForm : Form{
         exportPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50f));
         topLevel.Controls.Add(exportPanel, 1, 0);
 
-        Button runButton = new Button {Text = "Run", Dock = DockStyle.Fill};
+        runButton = new Button {Text = "Run", Dock = DockStyle.Fill};
         runButton.Click += RunProcess;
         Button openDestfolder = new Button {Text = "Open Destination Folder", Dock = DockStyle.Fill};
         openDestfolder.Click += OpenDestfolder;
@@ -223,7 +225,7 @@ public class StatementMoverForm : Form{
         if (selectedIndex != -1){
             fileMoveStatusBox.Text = stmts[selectedIndex].GetFileMoveStatusText();
         }else{
-            fileMoveStatusBox.Text = "Select a file to view its status";
+            fileMoveStatusBox.Text = "Files Moved! Select a file to view its status";
         }
     }
 
@@ -236,10 +238,15 @@ public class StatementMoverForm : Form{
         if (result == DialogResult.OK){
             Button? btn = sender as Button;
             if (btn!.Text.Split(" ")[1] == "Input"){
+                fileReadStatusBox.Text = "";
+                fileMoveStatusBox.Text = "";
                 selectedInPathText = folderDialog.SelectedPath;
                 selectedInPathBox.Text = selectedInPathText;
+                Application.DoEvents();
                 PopulateFileList(folderDialog.SelectedPath);
             } else if (btn!.Text.Split(" ")[1] == "Destination"){
+                fileMoveStatusBox.Text = "";
+                fileMoveListBox.Items.Clear();
                 selectedOutPathText = folderDialog.SelectedPath;
                 selectedOutPathBox.Text = selectedOutPathText;
                 Statement.baseDestDir = selectedOutPathText.Replace("\\", "/");
@@ -249,13 +256,17 @@ public class StatementMoverForm : Form{
 
     private void RunProcess(object? sender, EventArgs? e){
         if (selectedInPathText != ""){
+            runButton.Enabled = false;
+            fileMoveStatusBox.Text = "Moving Files...";
             fileMoveListBox.Items.Clear();
             foreach(Statement stmt in stmts){
                 stmt.MoveFile(allowDupe.Checked, disableCopy.Checked);
                 fileMoveListBox.Items.Add(stmt.GetMovedFileDisplayText());
+                Application.DoEvents();
             }
-            fileMoveStatusBox.Text = "Select a file to view its status";
+            fileMoveStatusBox.Text = "Files Moved! Select a file to view its status";
             fileMoveListBox.SelectedIndex = fileLoadListBox.SelectedIndex;
+            runButton.Enabled = true;
         }
     }
 
@@ -273,18 +284,22 @@ public class StatementMoverForm : Form{
     }
 
     private void PopulateFileList(string folderPath){
-            stmts = [];
-            fileLoadListBox.Items.Clear();
-            fileMoveListBox.Items.Clear();
-            string [] fileEntries = Directory.GetFiles(folderPath, "*.pdf");
-            foreach (var file in fileEntries)
-            {
-                Statement stmt = new Statement(regexManager, file);
-                stmts.Add(stmt);
-                fileLoadListBox.Items.Add(stmt.GetInitialFileDisplayText());
-            }
-            fileReadStatusBox.Text = "Select a file to view its status";
+        runButton.Enabled = false;
+        fileReadStatusBox.Text = "Loading Files...";
+        stmts = [];
+        fileLoadListBox.Items.Clear();
+        fileMoveListBox.Items.Clear();
+        string [] fileEntries = Directory.GetFiles(folderPath, "*.pdf");
+        foreach (var file in fileEntries)
+        {
+            Statement stmt = new Statement(regexManager, file);
+            stmts.Add(stmt);
+            fileLoadListBox.Items.Add(stmt.GetInitialFileDisplayText());
+            Application.DoEvents();
         }
+        fileReadStatusBox.Text = "Files Loaded! Select a file to view its status";
+        runButton.Enabled = true;
+    }
 
     private static Stream LoadIco(){
         string resourceName = "StatementMover.resources.lambicon.ico";
