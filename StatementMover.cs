@@ -128,7 +128,7 @@ public class StatementMoverForm : Form{
         topLevel.Controls.Add(rulesPanel, 2, 1);
         topLevel.SetRowSpan(rulesPanel, 2);
 
-        buildRulesPanel();
+        BuildRulesPanel();
     }   
 
     private void SaveRegexClick(object? sender, EventArgs e){
@@ -136,7 +136,7 @@ public class StatementMoverForm : Form{
     }
     private void ReloadRegexClick(object? sender, EventArgs e){
         regexManager.LoadRegex();
-        buildRulesPanel();
+        BuildRulesPanel();
     }
     private void OpenLocationClick(object? sender, EventArgs e){
         regexManager.OpenRegexLocation();
@@ -144,15 +144,15 @@ public class StatementMoverForm : Form{
     private void UploadRegexClick(object? sender, EventArgs e){
         regexManager.UploadRegex();
         regexManager.LoadRegex();
-        buildRulesPanel();
+        BuildRulesPanel();
     }
 
     private void addRuleClick(object? sender, EventArgs e){
         regexManager.AddRule("", "");           //add an empty rule
-        addRulePanel(regexManager.ruleCount);   //create the panel for that rule
+        AddRulePanel(regexManager.ruleCount);   //create the panel for that rule
     }
 
-    private void addRulePanel(int ruleNumber, string reg = "", string dir = ""){
+    private void AddRulePanel(int ruleNumber, string reg = "", string dir = ""){
         TableLayoutPanel rulePanel = new TableLayoutPanel{Name = $"panel|{ruleNumber}", Dock = DockStyle.Fill, ColumnCount = 4, RowCount = 1, AutoSize=true};
         rulePanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35f));
         rulePanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35f));
@@ -160,12 +160,12 @@ public class StatementMoverForm : Form{
         rulePanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 15f));
         rulesPanel.Controls.Add(rulePanel);
 
-        TextBox ruleRegBox = new TextBox{Dock = DockStyle.Fill, Text = reg, Name=$"regbox|{ruleNumber}"};
-        TextBox ruleDirBox = new TextBox{Dock = DockStyle.Fill, Text = dir, Name=$"dirbox|{ruleNumber}"};
+        TextBox ruleRegBox = new TextBox{Dock = DockStyle.Fill, Text = reg, PlaceholderText = "Account Name Rule", Name=$"regbox|{ruleNumber}"};
+        TextBox ruleDirBox = new TextBox{Dock = DockStyle.Fill, Text = dir, PlaceholderText = "Destination Directory", Name=$"dirbox|{ruleNumber}"};
         Button applyButton = new Button{Dock = DockStyle.Fill, Name = $"apply|{ruleNumber}",Text = "Apply"};
         Button deleteButton = new Button{Dock = DockStyle.Fill, Name = $"delete|{ruleNumber}",Text = "❌"};
         applyButton.Click += applyRule;
-        deleteButton.Click += removeRuleClick;
+        deleteButton.Click += RemoveRuleClick;
         rulePanel.Controls.Add(ruleRegBox, 0, 0);
         rulePanel.Controls.Add(ruleDirBox, 1, 0);
         rulePanel.Controls.Add(applyButton, 2, 0);
@@ -180,7 +180,7 @@ public class StatementMoverForm : Form{
         regexManager.EditRule(ruleNum, ruleReg, ruleDir);
     }
 
-    private void removeRuleClick(object? sender, EventArgs e){
+    private void RemoveRuleClick(object? sender, EventArgs e){
         Button btn = (sender as Button)!;
         int ruleNum = Int32.Parse(btn.Name.Split("|")[1]);
         TableLayoutPanel? panel = rulesPanel.Controls.Find($"panel|{ruleNum}", true)[0] as TableLayoutPanel;
@@ -201,10 +201,10 @@ public class StatementMoverForm : Form{
         regexManager.RemoveRule(ruleNum);
     }
 
-    private void buildRulesPanel(){
+    private void BuildRulesPanel(){
         rulesPanel.Controls.Clear();
         for(int i = 0; i < regexManager.ruleCount; i++){
-            addRulePanel(i+1, regexManager.ruleRegex[i], regexManager.ruleDirectory[i]);
+            AddRulePanel(i+1, regexManager.ruleRegex[i], regexManager.ruleDirectory[i]);
         }
     }
 
