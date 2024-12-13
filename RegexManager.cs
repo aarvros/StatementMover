@@ -2,7 +2,8 @@ using System.Diagnostics;
 
 namespace RegexManager{
     public class RegexManager{
-        public static readonly string regexPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StatementMoverRegex.txt");
+        public static readonly string regexDirPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\StatementMover\\";
+        public static readonly string regexPath = $"{regexDirPath}\\StatementMoverRegex.txt";
         public List<string> ruleRegex = [];
         public List<string> ruleDirectory = [];
         public List<string> ruleGeneralDir = [];
@@ -12,11 +13,11 @@ namespace RegexManager{
         }
 
         public bool OpenRegexLocation(){
-            if(File.Exists(regexPath)){
-                Process.Start("explorer.exe", regexPath);
+            if(Path.Exists(regexDirPath)){
+                Process.Start("explorer.exe", regexDirPath);
                 return true;
             }else{
-                MessageBox.Show($"File {regexPath} does not exist!", "Regex Does Not Exist", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Folder {regexDirPath} does not exist!", "Regex Does Not Exist", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -50,6 +51,7 @@ namespace RegexManager{
         }
 
         public bool SaveRegex(){
+            if (!Directory.Exists("StatementMover")){Directory.CreateDirectory(regexDirPath);}  //create the dir if it doesnt exist
             FileStream fs = new FileStream(regexPath, FileMode.Create, FileAccess.Write);
             StreamWriter writer = new StreamWriter(fs);
             try{
@@ -86,7 +88,7 @@ namespace RegexManager{
             }
         }
 
-        public void editRule(int ruleNum, string ruleReg, string ruleDir){
+        public void EditRule(int ruleNum, string ruleReg, string ruleDir){
             try{
                 ruleRegex[ruleNum-1] = ruleReg;
                 ruleDirectory[ruleNum-1] = ruleDir;
@@ -95,13 +97,13 @@ namespace RegexManager{
             }
         }
 
-        public void addRule(string ruleReg, string ruleDir){
+        public void AddRule(string ruleReg, string ruleDir){
             ruleRegex.Add(ruleReg);
             ruleDirectory.Add(ruleDir);
             ruleCount++;
         }
 
-        public void removeRule(int ruleNum){
+        public void RemoveRule(int ruleNum){
             try{
                 int index = ruleNum - 1;
                 ruleRegex.RemoveAt(index);

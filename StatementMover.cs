@@ -148,7 +148,7 @@ public class StatementMoverForm : Form{
     }
 
     private void addRuleClick(object? sender, EventArgs e){
-        regexManager.addRule("", "");           //add an empty rule
+        regexManager.AddRule("", "");           //add an empty rule
         addRulePanel(regexManager.ruleCount);   //create the panel for that rule
     }
 
@@ -177,7 +177,7 @@ public class StatementMoverForm : Form{
         int ruleNum = Int32.Parse(btn.Name.Split("|")[1]);
         string ruleReg = rulesPanel.Controls.Find($"regbox|{ruleNum}", true)[0].Text ?? "";
         string ruleDir = rulesPanel.Controls.Find($"dirbox|{ruleNum}", true)[0].Text ?? "";
-        regexManager.editRule(ruleNum, ruleReg, ruleDir);
+        regexManager.EditRule(ruleNum, ruleReg, ruleDir);
     }
 
     private void removeRuleClick(object? sender, EventArgs e){
@@ -198,7 +198,7 @@ public class StatementMoverForm : Form{
                 }
             }
         }
-        regexManager.removeRule(ruleNum);
+        regexManager.RemoveRule(ruleNum);
     }
 
     private void buildRulesPanel(){

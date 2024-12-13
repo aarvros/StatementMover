@@ -175,44 +175,6 @@ namespace StatementFile{
             }
         }
 
-        /*
-        string[] allDirs = Directory.GetDirectories($"{baseDestDir}/");
-        bool dirExistsAsName = false;
-        bool dirIsGeneral = false;
-        foreach(string dir in allDirs){
-            if(dir.Contains(accountName)){
-                dirExistsAsName = true;
-            }
-        }
-        foreach(string dir in generalDirs){
-            if(dir.Contains(accountName)){
-                dirIsGeneral = true;
-            }
-        }
-        if (dirExistsAsName && !dirIsGeneral){
-            fileMoveDump += $"{nl}Found Directory {accountName}/{nl}File Destination: {baseDestDir}/{accountName}/";
-            return $"{baseDestDir}/{accountName}";
-        } else {
-            fileMoveDump += $"{nl}Directory {accountName} does not exist or is a general directory";
-            for(int i = 0; i < numRegex; i++){
-                string reg;
-                if(regexManager.ruleRegex[i][..2] == "<>"){
-                    reg = regexManager.ruleRegex[i][2..];
-                }else{
-                    reg = regexManager.ruleRegex[i][2..];
-                }
-                string r = @$"{reg}";
-                if (Regex.Match(accountName, r, RegexOptions.IgnoreCase).Success && Directory.Exists($"{baseDestDir}/{regexManager.ruleDirectory[i]}")){
-                    return GetBOADir(regexManager.ruleDirectory[i]);
-                }
-            }
-            fileMovedOk = false;
-            fileMoveDump += $"{nl}General Directory: No matching general directory found";
-            return "";
-        }
-        }
-        */
-
         public string GetInitialFileDisplayText(){
             if (fileReadOk){
                 return $"{fileOkIcon}{fileName}";

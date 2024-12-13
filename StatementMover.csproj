@@ -23,17 +23,9 @@
     <EmbeddedResource Include="resources\lambicon.ico" />
     <EmbeddedResource Include="resources\PdfiumViewer.dll" />
     <EmbeddedResource Include="resources\x64\pdfium.dll" />
-    <None Update="regex.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="README.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
-  <!--
   <Target Name="RunPostPublishScript" AfterTargets="Publish">
     <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)PostPublishCompress.ps1&quot; -OutputPath &quot;$(OutputPath)&quot;" />
   </Target>
-  -->
 
 </Project>

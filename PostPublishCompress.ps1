@@ -1,36 +1,31 @@
 $workingDir = $PWD.Path
 $publishDir = "$workingDir\bin\Release\net8.0-windows\win-x64\publish"
-$objDir = "$publishDir\bin"
 $exeFile = "$publishDir\StatementMover.exe"
-$readmeFile = "$publishDir\README.txt"
-$shortcutFile = "$publishDir\StatementMover.exe.lnk"
 $zipFile = "release\StatementMover.zip"
+$exeFileDest = "release\StatementMover.exe"
 
-if (Test-Path $objDir) {
-    Remove-Item -Path $objDir -Recurse -Force
+# Ensure the Release folder exists, if not, create it
+$releaseFolder = "release"
+if (-not (Test-Path $releaseFolder)) {
+    New-Item -ItemType Directory -Path $releaseFolder
 }
 
-if (-not (Test-Path $objDir)) {
-    New-Item -ItemType Directory -Path $objDir
-}
-
-$nlFile = "$publishDir\nl\PdfiumViewer.resources.dll"
-Move-Item $nlFile -Destination "$objDir\$_"
-$x64File = "$publishDir\x64\pdfium.dll"
-Move-Item $x64File -Destination "$objDir\$_"
-if (Test-Path "$publishDir\nl") {
-    Remove-Item -Path "$publishDir\nl" -Force
-}
-if (Test-Path "$publishDir\x64") {
-    Remove-Item -Path "$publishDir\x64" -Force
-}
-
-Get-ChildItem -Path $publishDir -File | Where-Object { $_.Name -ne 'README.md' } | ForEach-Object {
-    Move-Item $_.FullName -Destination "$objDir\$_"
-}
-
+# If the zip file already exists, remove it
 if (Test-Path $zipFile) {
     Remove-Item $zipFile -Force
 }
+
+# Compress just the .exe file into the zip
+Write-Host "Compressing $exeFile into $zipFile..."
 Add-Type -AssemblyName "System.IO.Compression.FileSystem"
-[System.IO.Compression.ZipFile]::CreateFromDirectory($publishDir, $zipFile)
+[System.IO.Compression.ZipFile]::CreateFromDirectory($publishDir, $zipFile, [System.IO.Compression.CompressionLevel]::Optimal, $false)
+Write-Host "Compression complete! The file is located at $zipFile" -ForegroundColor Green
+
+if (Test-Path $exeFileDest) {
+    Remove-Item $exeFileDest -Force
+}
+
+# Move the .exe to the release folder
+Write-Host "Moving $exeFile to release/..."
+Move-Item -Path $exeFile -Destination "release"
+Write-Host "File has been moved to release/" -ForegroundColor Green
